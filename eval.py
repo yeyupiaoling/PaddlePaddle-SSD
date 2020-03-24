@@ -78,6 +78,7 @@ def eval(data_args, test_list, batch_size, model_dir=None):
 
 
 if __name__ == '__main__':
+    config.print_value()
     if not os.path.exists(config.persistables_model_path):
         raise ValueError("The model path [%s] does not exist." % (config.persistables_model_path))
 

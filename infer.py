@@ -19,8 +19,6 @@ exe.run(fluid.default_startup_program())
                                              model_filename='model.paddle',
                                              params_filename='params.paddle')
 
-print(feeded_var_names)
-print(target_var)
 
 with open(config.label_file, 'r', encoding='utf-8') as f:
     names = f.readlines()
@@ -68,12 +66,13 @@ def draw_image(image_path, results):
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img)
     for result in results:
+        print(result)
         xmin, ymin, xmax, ymax = clip_bbox(result[2:])
         draw.rectangle([int(xmin * h), int(ymin * w), int(xmax * h), int(ymax * w)], outline=(0, 0, 255), width=4)
         # 字体的格式
         font_style = ImageFont.truetype("font/simfang.ttf", 18, encoding="utf-8")
         # 绘制文本
-        draw.text((int(xmin * h), int(ymin * w)), '%s, %0.2f' % (names[result[0]], result[1]), (0, 255, 0),
+        draw.text((int(xmin * h), int(ymin * w)), '%s, %0.2f' % (names[int(result[0])], result[1]), (0, 255, 0),
                   font=font_style)
     # 显示图像
     cv2.imshow('result image', cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR))
@@ -81,4 +80,8 @@ def draw_image(image_path, results):
 
 
 if __name__ == '__main__':
-    img_path = infer('dataset/VOCdevkit/VOC2007/JPEGImages/000480.jpg')
+    img_path = 'dataset/VOCdevkit/VOC2007/JPEGImages/000480.jpg'
+    result = infer(img_path)
+    draw_image(img_path, result)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

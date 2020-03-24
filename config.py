@@ -16,7 +16,7 @@ ap_version = '11point'
 # character class num.
 class_num = 21
 # use model name
-use_model = 'mobilenet_ssd'
+use_model = 'mobilenet_v1_ssd'
 # data label/
 label_file = 'dataset/label_list'
 # The list file of images to be used for training.
@@ -34,8 +34,19 @@ use_gpu = True
 # Whether use parallel to train.
 parallel = True
 # Whether user multiprocess to reader data.(Windows can't use)
-use_multiprocess = False
+use_multiprocess = True
 # user number workers reader data.
 num_workers = 6
 # quant train model
 quant_infer_model_path = 'models/quant_infer'
+
+
+def print_value():
+    keys = ['image_shape', 'batch_size', 'epoc_num', 'img_mean', 'img_std', 'lr', 'lr_epochs', 'lr_decay', 'ap_version',
+            'class_num', 'use_model', 'label_file', 'train_list', 'test_list', 'nms_threshold',
+            'persistables_model_path',
+            'infer_model_path', 'pretrained_model', 'use_gpu', 'parallel', 'use_multiprocess', 'num_workers',
+            'quant_infer_model_path']
+
+    for key in keys:
+        print("%s: %s" % (key, eval(key)))

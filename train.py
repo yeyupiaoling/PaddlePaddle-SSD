@@ -198,6 +198,7 @@ def train(data_args, train_file_list, val_file_list):
 
 
 if __name__ == '__main__':
+    config.print_value()
     data_args = reader.Settings(label_file_path=config.label_file,
                                 resize_h=config.image_shape[1],
                                 resize_w=config.image_shape[2],
