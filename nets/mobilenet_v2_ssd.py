@@ -33,10 +33,10 @@ class MobileNetV2SSD:
             in_c = int(c * scale)
         # 19x19
         module11 = input
-        tmp = self.invresi_blocks(input=input, in_c=in_c, t=6, c=int(160 * scale), n=3, s=2)
+        tmp = self.invresi_blocks(input=input, in_c=in_c, t=6, c=int(512 * scale), n=3, s=2)
 
         # 10x10
-        module13 = self.invresi_blocks(input=tmp, in_c=int(160 * scale), t=6, c=int(320 * scale), n=1, s=1)
+        module13 = self.invresi_blocks(input=tmp, in_c=int(512 * scale), t=6, c=int(1024 * scale), n=1, s=1)
         module14 = self.extra_block(module13, 256, 512, 1)
         # 5x5
         module15 = self.extra_block(module14, 128, 256, 1)
@@ -130,7 +130,7 @@ class MobileNetV2SSD:
                                                   stride=s,
                                                   filter_size=3,
                                                   padding=1,
-                                                  expansion_factor=t, )
+                                                  expansion_factor=t)
 
         last_residual_block = first_block
         last_c = c

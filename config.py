@@ -3,7 +3,7 @@ image_shape = [3, 300, 300]
 # Minibatch size.
 batch_size = 32
 # train epoch number.
-epoc_num = 120
+epoc_num = 1200
 # image mean.
 img_mean = 127.5
 # image std.
