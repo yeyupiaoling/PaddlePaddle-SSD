@@ -33,9 +33,10 @@ class MobileNetV2SSD:
             in_c = int(c * scale)
         # 19x19
         module11 = input
+        tmp = self.invresi_blocks(input=input, in_c=in_c, t=6, c=int(160 * scale), n=3, s=2)
 
         # 10x10
-        module13 = self.conv_bn(module11, 3, 1024, 2, 1)
+        module13 = self.invresi_blocks(input=tmp, in_c=int(160 * scale), t=6, c=int(320 * scale), n=1, s=1)
         module14 = self.extra_block(module13, 256, 512, 1)
         # 5x5
         module15 = self.extra_block(module14, 128, 256, 1)
@@ -59,7 +60,8 @@ class MobileNetV2SSD:
 
         return mbox_locs, mbox_confs, box, box_var
 
-    def conv_bn_layer(self, input, filter_size, num_filters, stride, padding, num_groups=1, if_act=True, use_cudnn=True):
+    def conv_bn_layer(self, input, filter_size, num_filters, stride, padding, num_groups=1, if_act=True,
+                      use_cudnn=True):
         parameter_attr = ParamAttr(learning_rate=0.1, initializer=MSRA())
         conv = fluid.layers.conv2d(input=input,
                                    num_filters=num_filters,

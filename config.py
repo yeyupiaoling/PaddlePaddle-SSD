@@ -34,7 +34,7 @@ use_gpu = True
 # Whether use parallel to train.
 parallel = True
 # Whether user multiprocess to reader data.(Windows can't use)
-use_multiprocess = True
+use_multiprocess = False
 # user number workers reader data.
 num_workers = 6
 # quant train model

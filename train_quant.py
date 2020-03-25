@@ -158,7 +158,7 @@ def train(data_args, train_file_list, val_file_list):
                                 batch_size_per_device,
                                 shuffle=True,
                                 num_workers=config.num_workers)
-    test_reader = reader.test(data_args, val_file_list, config.batch_size)
+    test_reader = reader.test(data_args, val_file_list, 4)
     train_py_reader.decorate_paddle_reader(train_reader)
     test_py_reader.decorate_paddle_reader(test_reader)
 

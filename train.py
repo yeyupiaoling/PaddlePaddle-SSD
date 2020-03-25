@@ -157,7 +157,7 @@ def train(data_args, train_file_list, val_file_list):
                                            loss_name=loss.name,
                                            build_strategy=build_strategy)
 
-    test_reader = reader.test(data_args, val_file_list, 8)
+    test_reader = reader.test(data_args, val_file_list, 4)
     test_py_reader.decorate_paddle_reader(test_reader)
 
     best_map = 0.

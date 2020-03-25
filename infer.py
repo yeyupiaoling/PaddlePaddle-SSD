@@ -1,4 +1,6 @@
 import os
+import time
+
 import cv2
 import numpy as np
 import paddle.fluid as fluid
@@ -80,8 +82,11 @@ def draw_image(image_path, results):
 
 
 if __name__ == '__main__':
-    img_path = 'dataset/VOCdevkit/VOC2007/JPEGImages/000480.jpg'
-    result = infer(img_path)
-    draw_image(img_path, result)
+    img_path = 'dataset/VOCdevkit/VOC2007/JPEGImages/'
+    for img in os.listdir(img_path):
+        image_path = img_path + '/' + img
+        result = infer(image_path)
+        draw_image(image_path, result)
+        time.sleep(1)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
