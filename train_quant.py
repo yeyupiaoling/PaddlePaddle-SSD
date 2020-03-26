@@ -89,13 +89,13 @@ def test(exe, test_prog, map_eval, test_py_reader):
     return mean_map
 
 
-def save_infer_model(exe, main_prog, ssd_out, model_save_dir):
-    if not os.path.basename(model_save_dir):
-        os.makedirs(os.path.basename(model_save_dir))
-    if os.path.exists(model_save_dir):
-        shutil.rmtree(model_save_dir)
-    print('save models to %s' % model_save_dir)
-    fluid.io.save_inference_model(dirname=model_save_dir,
+def save_infer_model(exe, main_prog, ssd_out):
+    if os.path.exists(config.quant_infer_model_path):
+        shutil.rmtree(config.quant_infer_model_path)
+    else:
+        os.makedirs(config.quant_infer_model_path)
+    print('save models to %s' % config.quant_infer_model_path)
+    fluid.io.save_inference_model(dirname=config.quant_infer_model_path,
                                   feeded_var_names=[],
                                   target_vars=[ssd_out],
                                   executor=exe,
@@ -192,7 +192,7 @@ def train(data_args, train_file_list, val_file_list):
         test_map = test(exe, test_prog, map_eval, test_py_reader)
         print("Epoc {0}, test map {1}".format(epoc_id, test_map))
         # save infer model
-        save_infer_model(exe, test_prog, nmsed_out, config.quant_infer_model_path)
+        save_infer_model(exe, test_prog, nmsed_out)
 
 
 if __name__ == '__main__':

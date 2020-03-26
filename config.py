@@ -28,7 +28,7 @@ nms_threshold = 0.45
 persistables_model_path = 'models/%s/persistables' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
-pretrained_model = 'pretrained/ssd_mobilenet_v1_pascalvoc'
+pretrained_model = None
 # Whether use GPU to train.
 use_gpu = True
 # Whether use parallel to train.
@@ -38,7 +38,7 @@ use_multiprocess = False
 # user number workers reader data.
 num_workers = 6
 # quant train model
-quant_infer_model_path = 'models/quant_infer'
+quant_infer_model_path = 'models/%s/quant_infer' % use_model
 
 
 def print_value():

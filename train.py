@@ -71,10 +71,10 @@ def build_program(main_prog, startup_prog, is_train):
 
 
 def save_model(exe, main_prog, model_path, ssd_out=None, image=None, is_infer_model=False):
-    if not os.path.basename(model_path):
-        os.makedirs(os.path.basename(model_path))
-    if os.path.exists(model_path):
-        shutil.rmtree(model_path)
+    if os.path.exists(config.persistables_model_path):
+        shutil.rmtree(config.persistables_model_path)
+    else:
+        os.makedirs(config.persistables_model_path)
     print('save models to %s' % model_path)
     if is_infer_model:
         fluid.io.save_inference_model(dirname=model_path,
