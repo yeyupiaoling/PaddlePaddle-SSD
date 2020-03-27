@@ -1,5 +1,6 @@
 .idea/
 models/
+log/
 dataset/
 pretrained/
 __pycache__/

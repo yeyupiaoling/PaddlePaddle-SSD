@@ -16,11 +16,7 @@ exe.run(fluid.default_startup_program())
 
 [infer_program,
  feeded_var_names,
- target_var] = fluid.io.load_inference_model(dirname=config.infer_model_path,
-                                             executor=exe,
-                                             model_filename='model.paddle',
-                                             params_filename='params.paddle')
-
+ target_var] = fluid.io.load_inference_model(dirname=config.infer_model_path, executor=exe)
 
 with open(config.label_file, 'r', encoding='utf-8') as f:
     names = f.readlines()

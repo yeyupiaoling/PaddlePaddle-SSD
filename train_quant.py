@@ -99,9 +99,7 @@ def save_infer_model(exe, main_prog, ssd_out):
                                   feeded_var_names=[],
                                   target_vars=[ssd_out],
                                   executor=exe,
-                                  main_program=main_prog,
-                                  model_filename='model.paddle',
-                                  params_filename='params.paddle')
+                                  main_program=main_prog)
 
 
 def train(data_args, train_file_list, val_file_list):

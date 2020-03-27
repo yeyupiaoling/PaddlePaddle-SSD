@@ -5,11 +5,22 @@ import time
 import numpy as np
 import paddle.fluid as fluid
 import config
+from visualdl import LogWriter
 from nets import mobilenet_v1_ssd, mobilenet_v2_ssd, vgg_ssd, resnet_ssd
 from utils import reader
 
 os.environ['FLAGS_fraction_of_gpu_memory_to_use'] = '0.9'
 os.environ['FLAGS_eager_delete_tensor_gb'] = '0'
+
+# 创建记录器
+log_writer = LogWriter(dir='log/', sync_cycle=10)
+
+# 创建训练和测试记录数据工具
+with log_writer.mode('train') as writer:
+    train_loss_writer = writer.scalar('Loss')
+
+with log_writer.mode('test') as writer:
+    test_map_writer = writer.scalar('Map')
 
 with open(config.train_list, 'r', encoding='utf-8') as f:
     train_images = len(f.readlines())
@@ -81,9 +92,7 @@ def save_model(exe, main_prog, model_path, ssd_out=None, image=None, is_infer_mo
                                       feeded_var_names=[image.name],
                                       target_vars=[ssd_out],
                                       executor=exe,
-                                      main_program=main_prog,
-                                      model_filename='model.paddle',
-                                      params_filename='params.paddle')
+                                      main_program=main_prog)
     else:
         fluid.io.save_persistables(executor=exe,
                                    dirname=model_path,
@@ -131,8 +140,8 @@ def train(data_args, train_file_list, val_file_list):
                                           startup_prog=startup_prog,
                                           is_train=True)
     test_py_reader, map_eval, nmsed_out, image = build_program(main_prog=test_prog,
-                                                           startup_prog=startup_prog,
-                                                           is_train=False)
+                                                               startup_prog=startup_prog,
+                                                               is_train=False)
 
     test_prog = test_prog.clone(for_test=True)
     place = fluid.CUDAPlace(0) if config.use_gpu else fluid.CPUPlace()
@@ -161,6 +170,8 @@ def train(data_args, train_file_list, val_file_list):
     test_py_reader.decorate_paddle_reader(test_reader)
 
     best_map = 0.
+    train_step = 0
+    test_step = 0
 
     for epoc_id in range(config.epoc_num):
         train_reader = reader.train(data_args,
@@ -185,6 +196,11 @@ def train(data_args, train_file_list, val_file_list):
                 if batch_id % 100 == 0:
                     print("Epoc: {:d}, batch: {:d}, loss: {:.5f}, batch/second: {:.5f}".format(
                         epoc_id, batch_id, loss_v, start_time - prev_start_time))
+
+                    # 写入训练输出数据
+                    train_loss_writer.add_record(train_step, loss_v)
+                    train_step += 1
+
                 batch_id += 1
             except (fluid.core.EOFException, StopIteration):
                 train_reader().close()
@@ -193,6 +209,9 @@ def train(data_args, train_file_list, val_file_list):
 
         # run test
         best_map, mean_map = test(epoc_id, best_map, exe, test_prog, map_eval, nmsed_out, image, test_py_reader)
+        # 写入测试输出数据
+        test_map_writer.add_record(test_step, mean_map)
+        test_step += 1
         # save model
         save_model(exe, train_prog, config.persistables_model_path, is_infer_model=False)
 
