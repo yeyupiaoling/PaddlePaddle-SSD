@@ -16,7 +16,7 @@ ap_version = '11point'
 # character class num.
 class_num = 21
 # use model name
-use_model = 'mobilenet_v1_ssd'
+use_model = 'mobilenet_v2_ssd'
 # data label/
 label_file = 'dataset/label_list'
 # The list file of images to be used for training.
@@ -34,7 +34,7 @@ use_gpu = True
 # Whether use parallel to train.
 parallel = True
 # Whether user multiprocess to reader data.(Windows can't use)
-use_multiprocess = False
+use_multiprocess = True
 # user number workers reader data.
 num_workers = 6
 # quant train model

@@ -61,7 +61,8 @@ def build_program(main_prog, startup_prog, is_train):
                 with fluid.unique_name.guard("train"):
                     loss = fluid.layers.ssd_loss(locs, confs, gt_box, gt_label, box, box_var)
                     loss = fluid.layers.reduce_sum(loss)
-                    optimizer = optimizer_setting()
+                    # optimizer = optimizer_setting()
+                    optimizer = fluid.optimizer.Adam(learning_rate=1e-3)
                     optimizer.minimize(loss)
                 outs = [py_reader, loss]
             else:
