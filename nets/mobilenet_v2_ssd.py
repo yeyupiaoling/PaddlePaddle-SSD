@@ -15,9 +15,7 @@ class MobileNetV2SSD:
                                   (6, 24, 2, 2),
                                   (6, 32, 3, 2),
                                   (6, 64, 4, 2),
-                                  (6, 96, 3, 1),
-                                  (6, 160, 3, 1),
-                                  (6, 320, 1, 1)]
+                                  (6, 96, 3, 1)]
 
         # conv1
         input = self.conv_bn_layer(input=self.img,
@@ -35,21 +33,10 @@ class MobileNetV2SSD:
             in_c = int(c * scale)
         # 19x19
         module11 = input
-        tmp = self.conv_bn_layer(input=input,
-                                 num_filters=int(1280 * scale) if scale > 1.0 else 1280,
-                                 filter_size=1,
-                                 stride=1,
-                                 padding=0,
-                                 if_act=True)
+        tmp = self.invresi_blocks(input=input, in_c=in_c, t=6, c=int(512 * scale), n=3, s=2)
 
         # 10x10
-        module13 = self.conv_bn_layer(input=tmp,
-                                      num_filters=1024,
-                                      filter_size=3,
-                                      stride=2,
-                                      padding=1,
-                                      if_act=True)
-
+        module13 = self.invresi_blocks(input=tmp, in_c=int(512 * scale), t=6, c=int(1024 * scale), n=1, s=1)
         module14 = self.extra_block(module13, 256, 512, 1)
         # 5x5
         module15 = self.extra_block(module14, 128, 256, 1)
@@ -57,13 +44,6 @@ class MobileNetV2SSD:
         module16 = self.extra_block(module15, 128, 256, 1)
         # 2x2
         module17 = self.extra_block(module16, 64, 128, 1)
-
-        print(module11.shape)
-        print(module13.shape)
-        print(module14.shape)
-        print(module15.shape)
-        print(module16.shape)
-        print(module17.shape)
 
         mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
             inputs=[module11, module13, module14, module15, module16, module17],
