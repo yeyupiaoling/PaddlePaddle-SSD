@@ -25,7 +25,7 @@ train_list = 'dataset/trainval.txt'
 test_list = 'dataset/test.txt'
 nms_threshold = 0.45
 # Save model path
-model_path = 'models/%s/model' % use_model
+persistables_model_path = 'models/%s/persistables' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
 pretrained_model = 'models/%s/persistables' % use_model
@@ -34,7 +34,7 @@ use_gpu = True
 # Whether use parallel to train.
 parallel = True
 # Whether user multiprocess to reader data.(Windows can't use)
-use_multiprocess = True
+use_multiprocess = False
 # user number workers reader data.
 num_workers = 6
 # quant train model
@@ -43,7 +43,8 @@ quant_infer_model_path = 'models/%s/quant_infer' % use_model
 
 def print_value():
     keys = ['image_shape', 'batch_size', 'epoc_num', 'img_mean', 'img_std', 'lr', 'lr_epochs', 'lr_decay', 'ap_version',
-            'class_num', 'use_model', 'label_file', 'train_list', 'test_list', 'nms_threshold', 'model_path',
+            'class_num', 'use_model', 'label_file', 'train_list', 'test_list', 'nms_threshold',
+            'persistables_model_path',
             'infer_model_path', 'pretrained_model', 'use_gpu', 'parallel', 'use_multiprocess', 'num_workers',
             'quant_infer_model_path']
 

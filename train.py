@@ -83,8 +83,10 @@ def build_program(main_prog, startup_prog, is_train):
 
 
 def save_model(exe, main_prog, model_path, ssd_out=None, image=None, is_infer_model=False):
-    if not os.path.exists(config.model_path):
-        os.makedirs(config.model_path)
+    if os.path.exists(config.persistables_model_path):
+        shutil.rmtree(config.persistables_model_path)
+    else:
+        os.makedirs(config.persistables_model_path)
     print('save models to %s' % model_path)
     if is_infer_model:
         fluid.io.save_inference_model(dirname=model_path,
@@ -96,8 +98,6 @@ def save_model(exe, main_prog, model_path, ssd_out=None, image=None, is_infer_mo
         fluid.io.save_persistables(executor=exe,
                                    dirname=model_path,
                                    main_program=main_prog)
-        fluid.save(program=main_prog,
-                   model_path=os.path.join(config.model_path, "model"))
 
 
 def test(epoc_id, best_map, exe, test_prog, map_eval, nmsed_out, image, test_py_reader):
