@@ -25,10 +25,10 @@ train_list = 'dataset/trainval.txt'
 test_list = 'dataset/test.txt'
 nms_threshold = 0.45
 # Save model path
-persistables_model_path = 'models/%s/persistables' % use_model
+model_path = 'models/%s/model' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
-pretrained_model = None
+pretrained_model = 'models/%s/persistables' % use_model
 # Whether use GPU to train.
 use_gpu = True
 # Whether use parallel to train.
