@@ -4,6 +4,7 @@ import config
 import xml.etree.ElementTree
 from tqdm import tqdm
 
+
 # 打乱数据
 def shuffle_data(data_list_path):
     with open(data_list_path, 'r', encoding='utf-8') as f:
@@ -46,4 +47,5 @@ def create(images_dir, annotations_dir, train_list_path, test_list_path, label_f
 
 
 if __name__ == '__main__':
-    create('dataset/VOCdevkit/VOC2007/JPEGImages', 'dataset/VOCdevkit/VOC2007/Annotations', config.train_list, config.test_list, config.label_file)
+    create('dataset/VOCdevkit/VOC2007/JPEGImages', 'dataset/VOCdevkit/VOC2007/Annotations', config.train_list,
+           config.test_list, config.label_file)

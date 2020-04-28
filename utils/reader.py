@@ -22,8 +22,10 @@ class Settings(object):
                  ap_version='11point'):
         self._ap_version = ap_version
         self._label_list = []
-        for line in open(label_file_path):
-            self._label_list.append(line.strip())
+        with open(label_file_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        for line in lines:
+            self._label_list.append(line.strip().replace('\n', ''))
 
         self._apply_distort = apply_distort
         self._apply_expand = apply_expand
