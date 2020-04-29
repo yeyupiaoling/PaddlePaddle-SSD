@@ -61,12 +61,13 @@ def clip_bbox(bbox):
 def draw_image(image_path, results):
     img = cv2.imread(image_path)
     w, h, c = img.shape
+    print(w, h)
     img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img)
     for result in results:
-        print(result)
         xmin, ymin, xmax, ymax = clip_bbox(result[2:])
-        draw.rectangle([int(xmin * h), int(ymin * w), int(xmax * h), int(ymax * w)], outline=(0, 0, 255), width=4)
+        xmin, ymin, xmax, ymax = int(xmin * h), int(ymin * w), int(xmax * h), int(ymax * w)
+        draw.rectangle([xmin, ymin, xmax, ymax], outline=(0, 0, 255), width=4)
         # 字体的格式
         font_style = ImageFont.truetype("font/simfang.ttf", 18, encoding="utf-8")
         # 绘制文本

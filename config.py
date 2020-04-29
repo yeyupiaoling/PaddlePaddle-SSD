@@ -28,7 +28,7 @@ nms_threshold = 0.45
 persistables_model_path = 'models/%s/persistables' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
-pretrained_model = 'models/%s/persistables' % use_model
+pretrained_model = 'pretrained/mobilenet_v1_ssd_pascalvoc'
 # Whether use GPU to train.
 use_gpu = True
 # Whether use parallel to train.
