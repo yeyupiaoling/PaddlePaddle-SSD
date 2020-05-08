@@ -28,7 +28,7 @@ nms_threshold = 0.45
 persistables_model_path = 'models/%s/persistables' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
-pretrained_model = 'pretrained/mobilenet_v1_ssd_pascalvoc'
+pretrained_model = 'pretrained/mobilenet_v2_ssd_pascalvoc'
 # Whether use GPU to train.
 use_gpu = True
 # Whether use parallel to train.
@@ -37,16 +37,13 @@ parallel = True
 use_multiprocess = False
 # user number workers reader data.
 num_workers = 6
-# quant train model
-quant_infer_model_path = 'models/%s/quant_infer' % use_model
 
 
 def print_value():
     keys = ['image_shape', 'batch_size', 'epoc_num', 'img_mean', 'img_std', 'lr', 'lr_epochs', 'lr_decay', 'ap_version',
             'class_num', 'use_model', 'label_file', 'train_list', 'test_list', 'nms_threshold',
             'persistables_model_path',
-            'infer_model_path', 'pretrained_model', 'use_gpu', 'parallel', 'use_multiprocess', 'num_workers',
-            'quant_infer_model_path']
+            'infer_model_path', 'pretrained_model', 'use_gpu', 'parallel', 'use_multiprocess', 'num_workers']
 
     for key in keys:
         print("%s: %s" % (key, eval(key)))

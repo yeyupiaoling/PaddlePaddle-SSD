@@ -26,18 +26,6 @@ with open(config.train_list, 'r', encoding='utf-8') as f:
     train_images = len(f.readlines())
 
 
-def optimizer_setting():
-    iters = train_images // config.batch_size
-    boundaries = [i * iters for i in config.lr_epochs]
-    values = [i * config.lr for i in config.lr_decay]
-
-    optimizer = fluid.optimizer.RMSProp(
-        learning_rate=fluid.layers.piecewise_decay(boundaries, values),
-        regularization=fluid.regularizer.L2Decay(0.00005))
-
-    return optimizer
-
-
 def build_program(main_prog, startup_prog, is_train):
     with fluid.program_guard(main_prog, startup_prog):
         py_reader = fluid.layers.py_reader(capacity=64,
@@ -61,8 +49,7 @@ def build_program(main_prog, startup_prog, is_train):
                 with fluid.unique_name.guard("train"):
                     loss = fluid.layers.ssd_loss(locs, confs, gt_box, gt_label, box, box_var)
                     loss = fluid.layers.reduce_sum(loss)
-                    optimizer = optimizer_setting()
-                    # optimizer = fluid.optimizer.Adam(learning_rate=1e-3)
+                    optimizer = fluid.optimizer.Adam(learning_rate=1e-3)
                     optimizer.minimize(loss)
                 outs = [py_reader, loss]
             else:

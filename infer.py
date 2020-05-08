@@ -20,7 +20,7 @@ exe.run(fluid.default_startup_program())
 
 with open(config.label_file, 'r', encoding='utf-8') as f:
     names = f.readlines()
-confs_threshold = 0.5
+confs_threshold = 0.45
 
 
 # 图像预处理
@@ -28,6 +28,7 @@ def load_image(image_path):
     if not os.path.exists(image_path):
         raise ValueError("%s is not exist, you should specify data path correctly." % image_path)
     img = cv2.imread(image_path)
+    img = cv2.resize(img, (300, 300))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = img.transpose((2, 0, 1))
     img = np.expand_dims(img, axis=0).astype(np.float32)
@@ -79,11 +80,7 @@ def draw_image(image_path, results):
 
 
 if __name__ == '__main__':
-    img_path = 'dataset/VOCdevkit/VOC2007/JPEGImages/'
-    for img in os.listdir(img_path):
-        image_path = img_path + '/' + img
-        result = infer(image_path)
-        draw_image(image_path, result)
-        time.sleep(1)
+    img_path = 'dataset/images/image.jpg'
+    result = infer(img_path)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
