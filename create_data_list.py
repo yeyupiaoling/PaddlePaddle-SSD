@@ -19,6 +19,7 @@ def create(images_dir, annotations_dir, train_list_path, test_list_path, label_f
     f_train = open(train_list_path, 'w', encoding='utf-8')
     f_test = open(test_list_path, 'w', encoding='utf-8')
     f_label = open(label_file, 'w', encoding='utf-8')
+    f_label.write("background\n")
     label = set()
     images = os.listdir(images_dir)
     i = 0

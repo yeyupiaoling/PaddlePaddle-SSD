@@ -16,7 +16,7 @@ ap_version = '11point'
 # character class num.
 class_num = 21
 # use model name
-use_model = 'resnet_ssd'
+use_model = 'mobilenet_v2_ssd'
 # data label/
 label_file = 'dataset/label_list'
 # The list file of images to be used for training.
@@ -28,7 +28,7 @@ nms_threshold = 0.45
 persistables_model_path = 'models/%s/persistables' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
-pretrained_model = 'pretrained/resnet_ssd_pascalvoc'
+pretrained_model = 'models/mobilenet_v2_ssd_pascalvoc'
 # Whether use GPU to train.
 use_gpu = True
 # Whether use parallel to train.

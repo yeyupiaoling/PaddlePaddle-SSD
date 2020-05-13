@@ -14,7 +14,7 @@ label_file = 'dataset/label_list'
 # threshold value
 nms_threshold = 0.45
 # infer model path
-infer_model_path = 'models/resnet_ssd/infer'
+infer_model_path = 'models/mobilenet_v2_ssd/infer'
 # Whether use GPU to train.
 use_gpu = True
 
@@ -81,7 +81,7 @@ def draw_image(image_path, results):
         # 字体的格式
         font_style = ImageFont.truetype("font/simfang.ttf", 18, encoding="utf-8")
         # 绘制文本
-        draw.text((int(xmin * h), int(ymin * w)), '%s, %0.2f' % (names[int(result[0])], result[1]), (0, 255, 0),
+        draw.text((xmin, ymin), '%s, %0.2f' % (names[int(result[0])], result[1]), (0, 255, 0),
                   font=font_style)
     # 显示图像
     cv2.imshow('result image', cv2.cvtColor(np.asarray(img), cv2.COLOR_RGB2BGR))
