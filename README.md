@@ -15,3 +15,8 @@
 | ResNet_SSD网络的VOC预测模型 | pascalvoc |  |
 | MobileNet_V1_SSD网络的VOC预测模型 | pascalvoc | [点击下载](https://resource.doiduoyi.com/#y86w98i) |
 | MobileNet_V2_SSD网络的VOC预测模型 | pascalvoc | [点击下载](https://resource.doiduoyi.com/#6o5kiay) |
+
+
+```shell script
+visualdl --logdir=log/ --m=models/mobilenet_v2_ssd/infer --port=8080
+```
