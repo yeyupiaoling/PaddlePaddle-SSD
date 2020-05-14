@@ -187,6 +187,7 @@ def train(data_args, train_file_list, val_file_list):
 
                     # 写入训练输出数据
                     train_loss_writer.add_record(train_step, loss_v)
+                    train_loss_writer.save()
                     train_step += 1
 
                 batch_id += 1
@@ -199,6 +200,7 @@ def train(data_args, train_file_list, val_file_list):
         best_map, mean_map = test(epoc_id, best_map, exe, test_prog, map_eval, nmsed_out, image, test_py_reader)
         # 写入测试输出数据
         test_map_writer.add_record(test_step, mean_map)
+        test_map_writer.save()
         test_step += 1
         # save model
         save_model(exe, train_prog, config.persistables_model_path, is_infer_model=False)
