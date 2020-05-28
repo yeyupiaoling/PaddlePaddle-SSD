@@ -15,7 +15,7 @@ lr_decay = [1, 0.5, 0.25, 0.1, 0.01]
 ap_version = '11point'
 # character class num.
 class_num = 21
-# use model name
+# use model name，resnet_ssd、mobilenet_v2_ssd、mobilenet_v1_ssd、vgg_ssd
 use_model = 'mobilenet_v2_ssd'
 # data label/
 label_file = 'dataset/label_list'
@@ -28,7 +28,7 @@ nms_threshold = 0.45
 persistables_model_path = 'models/%s/persistables' % use_model
 infer_model_path = 'models/%s/infer' % use_model
 # The init model file of directory.
-pretrained_model = 'models/mobilenet_v2_ssd_pascalvoc'
+pretrained_model = 'pretrained/resnet_ssd_pascalvoc'
 # Whether use GPU to train.
 use_gpu = True
 # Whether use parallel to train.
