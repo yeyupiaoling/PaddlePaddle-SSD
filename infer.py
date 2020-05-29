@@ -15,7 +15,7 @@ label_file = 'dataset/label_list'
 # threshold value
 nms_threshold = 0.45
 # infer model path
-infer_model_path = 'models/mobilenet_v2_ssd/infer'
+infer_model_path = 'models/vgg_ssd/infer'
 # Whether use GPU to train.
 use_gpu = True
 
@@ -91,18 +91,18 @@ def draw_image(image_path, results):
 
 if __name__ == '__main__':
     # 将数据集中的图像一一预测并展示
-    images = os.listdir('dataset/images/')
-    for im in images:
-        img_path = 'dataset/images/' + im
-        result = infer(img_path)
-        draw_image(img_path, result)
-        time.sleep(1)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    # 单张图像预测
-    # img_path = '000001.jpg'
-    # result = infer(img_path)
-    # draw_image(img_path, result)
+    # images = os.listdir('dataset/images/')
+    # for im in images:
+    #     img_path = 'dataset/images/' + im
+    #     result = infer(img_path)
+    #     draw_image(img_path, result)
+    #     time.sleep(1)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+
+    # 单张图像预测
+    img_path = '000001.jpg'
+    result = infer(img_path)
+    draw_image(img_path, result)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
