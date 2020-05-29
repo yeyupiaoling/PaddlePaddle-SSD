@@ -125,13 +125,24 @@ def train(data_args, train_file_list, val_file_list):
     exe = fluid.Executor(place)
     exe.run(startup_prog)
 
-    if config.pretrained_model:
+    # 加载预训练模型或者上一个保存的参数
+    if config.persistables_model_path is not None and os.path.exists(config.persistables_model_path):
         def if_exist(var):
-            if os.path.exists(os.path.join(config.pretrained_model, var.name)):
+            if os.path.exists(os.path.join(config.persistables_model_path, var.name)):
                 print('loaded: %s' % var.name)
-            return os.path.exists(os.path.join(config.pretrained_model, var.name))
+            return os.path.exists(os.path.join(config.persistables_model_path, var.name))
 
-        fluid.io.load_vars(exe, config.pretrained_model, main_program=train_prog, predicate=if_exist)
+        print("Loading persistables model: %s" % config.persistables_model_path)
+        fluid.io.load_vars(exe, config.persistables_model_path, main_program=train_prog, predicate=if_exist)
+    else:
+        if config.pretrained_model:
+            def if_exist(var):
+                if os.path.exists(os.path.join(config.pretrained_model, var.name)):
+                    print('loaded: %s' % var.name)
+                return os.path.exists(os.path.join(config.pretrained_model, var.name))
+
+            print("Loading pretrained model: %s" % config.pretrained_model)
+            fluid.io.load_vars(exe, config.pretrained_model, main_program=train_prog, predicate=if_exist)
 
     if config.parallel:
         loss.persistable = True
