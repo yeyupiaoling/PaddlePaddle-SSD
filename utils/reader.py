@@ -86,16 +86,14 @@ def preprocess(img, bbox_labels, mode, settings):
         if settings._apply_expand:
             img, bbox_labels, img_width, img_height = image_util.expand_image(
                 img, bbox_labels, img_width, img_height, settings)
-        # sampling
-        batch_sampler = []
-        # hard-code here
-        batch_sampler.append(image_util.sampler(1, 1, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0))
-        batch_sampler.append(image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.1, 0.0))
-        batch_sampler.append(image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.3, 0.0))
-        batch_sampler.append(image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.5, 0.0))
-        batch_sampler.append(image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.7, 0.0))
-        batch_sampler.append(image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.9, 0.0))
-        batch_sampler.append(image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.0, 1.0))
+        # sampling, hard-code here
+        batch_sampler = [image_util.sampler(1, 1, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0),
+                         image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.1, 0.0),
+                         image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.3, 0.0),
+                         image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.5, 0.0),
+                         image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.7, 0.0),
+                         image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.9, 0.0),
+                         image_util.sampler(1, 50, 0.3, 1.0, 0.5, 2.0, 0.0, 1.0)]
         sampled_bbox = image_util.generate_batch_samples(batch_sampler, bbox_labels)
 
         img = np.array(img)
@@ -144,9 +142,8 @@ def pascalvoc(settings, file_list, mode, batch_size, shuffle):
             bbox_labels = []
             root = xml.etree.ElementTree.parse(label_path).getroot()
             for object in root.findall('object'):
-                bbox_sample = []
                 # start from 1
-                bbox_sample.append(float(settings.label_list.index(object.find('name').text)))
+                bbox_sample = [float(settings.label_list.index(object.find('name').text))]
                 bbox = object.find('bndbox')
                 difficult = float(object.find('difficult').text)
                 bbox_sample.append(float(bbox.find('xmin').text) / im_width)

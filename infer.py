@@ -104,3 +104,5 @@ if __name__ == '__main__':
     # img_path = '000001.jpg'
     # result = infer(img_path)
     # draw_image(img_path, result)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()

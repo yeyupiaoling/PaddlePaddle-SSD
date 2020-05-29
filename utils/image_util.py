@@ -119,10 +119,8 @@ def clip_bbox(src_bbox):
 def meet_emit_constraint(src_bbox, sample_bbox):
     center_x = (src_bbox.xmax + src_bbox.xmin) / 2
     center_y = (src_bbox.ymax + src_bbox.ymin) / 2
-    if center_x >= sample_bbox.xmin and \
-        center_x <= sample_bbox.xmax and \
-        center_y >= sample_bbox.ymin and \
-        center_y <= sample_bbox.ymax:
+    if sample_bbox.xmin <= center_x <= sample_bbox.xmax and \
+            sample_bbox.ymin <= center_y <= sample_bbox.ymax:
         return True
     return False
 
@@ -149,7 +147,6 @@ def transform_labels(bbox_labels, sample_bbox):
             sample_label.append(float(proj_bbox.ymin))
             sample_label.append(float(proj_bbox.xmax))
             sample_label.append(float(proj_bbox.ymax))
-            #sample_label.append(bbox_labels[i][5])
             sample_label = sample_label + bbox_labels[i][5:]
             sample_labels.append(sample_label)
     return sample_labels
