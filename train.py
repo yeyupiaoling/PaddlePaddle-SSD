@@ -15,6 +15,7 @@ with open(config.train_list, 'r', encoding='utf-8') as f:
     train_images = len(f.readlines())
 
 
+# 创建训练程序和测试程序
 def build_program(main_prog, startup_prog, is_train):
     with fluid.program_guard(main_prog, startup_prog):
         py_reader = fluid.layers.py_reader(capacity=64,
@@ -38,7 +39,7 @@ def build_program(main_prog, startup_prog, is_train):
                 with fluid.unique_name.guard("train"):
                     loss = fluid.layers.ssd_loss(locs, confs, gt_box, gt_label, box, box_var)
                     loss = fluid.layers.reduce_sum(loss)
-                    optimizer = fluid.optimizer.Adam(learning_rate=1e-3)
+                    optimizer = fluid.optimizer.Adam(learning_rate=config.lr)
                     optimizer.minimize(loss)
                 outs = [py_reader, loss]
             else:
@@ -58,6 +59,7 @@ def build_program(main_prog, startup_prog, is_train):
     return outs
 
 
+# 保存训练参数和预测模型
 def save_model(exe, main_prog, model_path, ssd_out=None, image=None, is_infer_model=False):
     if os.path.exists(model_path):
         shutil.rmtree(model_path)
@@ -76,6 +78,7 @@ def save_model(exe, main_prog, model_path, ssd_out=None, image=None, is_infer_mo
                                    main_program=main_prog)
 
 
+# 进行测试
 def test(epoc_id, best_map, exe, test_prog, map_eval, nmsed_out, image, test_py_reader):
     _, accum_map = map_eval.get_map_var()
     map_eval.reset(exe)
@@ -101,6 +104,7 @@ def test(epoc_id, best_map, exe, test_prog, map_eval, nmsed_out, image, test_py_
     return best_map, mean_map
 
 
+# 开始训练
 def train(data_args, train_file_list, val_file_list):
     if not config.use_gpu:
         devices_num = int(os.environ.get('CPU_NUM', multiprocessing.cpu_count()))
@@ -144,6 +148,7 @@ def train(data_args, train_file_list, val_file_list):
             print("Loading pretrained model: %s" % config.pretrained_model)
             fluid.io.load_vars(exe, config.pretrained_model, main_program=train_prog, predicate=if_exist)
 
+    # 使用多卡训练
     if config.parallel:
         loss.persistable = True
         build_strategy = fluid.BuildStrategy()
@@ -154,6 +159,7 @@ def train(data_args, train_file_list, val_file_list):
                                            loss_name=loss.name,
                                            build_strategy=build_strategy)
 
+    # 获取测试数据
     test_reader = reader.test(data_args, val_file_list, 4)
     test_py_reader.decorate_paddle_reader(test_reader)
 
@@ -167,21 +173,17 @@ def train(data_args, train_file_list, val_file_list):
                                     use_multiprocess=config.use_multiprocess,
                                     num_workers=config.num_workers)
         train_py_reader.decorate_paddle_reader(train_reader)
-        start_time = time.time()
         batch_id = 0
         train_py_reader.start()
         while True:
             try:
-                prev_start_time = start_time
-                start_time = time.time()
                 if config.parallel:
                     loss_v, = train_exe.run(fetch_list=[loss.name])
                 else:
                     loss_v, = exe.run(train_prog, fetch_list=[loss])
                 loss_v = np.mean(np.array(loss_v))
                 if batch_id % 100 == 0:
-                    print("Epoc: {:d}, batch: {:d}, loss: {:.5f}, batch/second: {:.5f}".format(
-                        epoc_id, batch_id, loss_v, start_time - prev_start_time))
+                    print("Epoc: {:d}, batch: {:d}, loss: {:.5f}".format(epoc_id, batch_id, loss_v))
                 batch_id += 1
             except (fluid.core.EOFException, StopIteration):
                 train_reader().close()

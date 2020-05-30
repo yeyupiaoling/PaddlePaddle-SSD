@@ -9,7 +9,7 @@ img_mean = 127.5
 # image std.
 img_std = 0.007843
 # optimizer parameter.
-lr = 1e-5
+lr = 1e-3
 lr_epochs = [40, 60, 80, 100]
 lr_decay = [1, 0.5, 0.25, 0.1, 0.01]
 ap_version = '11point'

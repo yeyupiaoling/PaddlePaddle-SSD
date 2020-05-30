@@ -5,7 +5,6 @@ import numpy as np
 import paddle.fluid as fluid
 from PIL import Image, ImageFont, ImageDraw
 
-
 # image mean
 img_mean = 127.5
 # image std.
@@ -13,7 +12,7 @@ img_std = 0.007843
 # data label/
 label_file = 'dataset/label_list'
 # threshold value
-nms_threshold = 0.45
+score_threshold = 0.45
 # infer model path
 infer_model_path = 'models/vgg_ssd/infer'
 # Whether use GPU to train.
@@ -47,6 +46,7 @@ def load_image(image_path):
     return img
 
 
+# 预测图像
 def infer(image_path):
     img = load_image(image_path)
     nmsed_out_v, = exe.run(infer_program,
@@ -56,12 +56,13 @@ def infer(image_path):
     nmsed_out_v = np.array(nmsed_out_v)
     results = []
     for dt in nmsed_out_v:
-        if dt[1] < nms_threshold:
+        if dt[1] < score_threshold:
             continue
         results.append(dt)
     return results
 
 
+# 限制数据的结果，保证在合理范围内
 def clip_bbox(bbox):
     xmin = max(min(bbox[0], 1.), 0.)
     ymin = max(min(bbox[1], 1.), 0.)
@@ -70,6 +71,7 @@ def clip_bbox(bbox):
     return xmin, ymin, xmax, ymax
 
 
+# 对图像进行画框
 def draw_image(image_path, results):
     img = cv2.imread(image_path)
     w, h, c = img.shape
