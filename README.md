@@ -23,7 +23,61 @@ SSD，全称Single Shot MultiBox Detector，是Wei Liu在ECCV 2016上提出的�
 
 
 # SSD模型介绍
-TODO
+SSD全称Single Shot MultiBox Detector，是2016年提出的一种one-stage目标检测算法，相比two-stage目标检测算法的Faster R-CNN来说，其特点是一步到位，速度相对较快。
+SSD有以下几个特点：
+1. 将bounding box的输出空间离散化为一系列不同纵横比的default box， 并能够调整box更好地匹配物体的形状。
+2. 将多个不同分辨率的feature map上的预测结果结合，解决了物体不同大小的问题。
+3. 模型结构简单，SSD模型把全部的计算都放在一个网络模型上，大体上可以分为两部分，图像特征提取网络和分类检测网络。
+
+以下是SSD的结构图，在原论文中主干网络为VGG16，后面接着6个卷积层，用于提取出6个不同尺度的feature map，这样可以提取出不同大小的bbox，以检测到不同大小的目标对象。其中主干网络可以替换成其他的卷积网络，所以SSD也产生了几种衍生版，例如MobileNetV2 SSD、ResNet50 SSD等等。生成的6个feature map都输入到分类检测网络中，分类检测网络分别对这6个feature map依次预测的，这个分类检测网络可以使用PaddlePaddle的`fluid.layers.multi_box_head()`接口实现。
+![](https://s1.ax1x.com/2020/06/01/tJr8H0.png)
+
+针对6个feature map的更详细图如下。
+![](https://s1.ax1x.com/2020/06/01/tJwMef.jpg)
+
+
+以下是按照原论文的模型参数搭建的网络模型，在各个衍生版参数设置也有所变动。如下的主干网络是使用VGG16，使用PaddlePaddle实现的代码片段如下。
+```python
+conv1 = self.conv_block(self.img, 64, 2)
+conv2 = self.conv_block(conv1, 128, 2)
+conv3 = self.conv_block(conv2, 256, 3)
+conv4 = self.conv_block(conv3, 512, 3)
+```
+
+6个feature map的实现代码如下，按照论文中的，feature map1的shape为`38*38*512`，feature map2的shape为`19*19*1024`，feature map3的shape为`10*10*512`，feature map4的shape为`5*5*256`，feature map5的shape为`3*3*256`，feature map6的shape为`1*1*256`，
+
+```python
+# 38x38
+module11 = self.conv_bn(conv4, 3, 512, 1, 1)
+tmp = self.conv_block(module11, 1024, 5)
+# 19x19
+module13 = fluid.layers.conv2d(tmp, 1024, 1)
+# 10x10
+module14 = self.extra_block(module13, 256, 512, 1)
+# 5x5
+module15 = self.extra_block(module14, 128, 256, 1)
+# 3x3
+module16 = self.extra_block(module15, 128, 256, 1)
+# 1x1
+module17 = self.extra_block(module16, 128, 256, 1)
+```
+
+最后这个就是分类检测模型，在PaddlePaddle上只需一个接口即可完成，在参数`inputs`参数中把6个feature map的输出都作为参数输入。
+```python
+mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
+    inputs=[module11, module13, module14, module15, module16, module17],
+    image=self.img,
+    num_classes=self.num_classes,
+    min_ratio=20,
+    max_ratio=90,
+    min_sizes=[60.0, 105.0, 150.0, 195.0, 240.0, 285.0],
+    max_sizes=[[], 150.0, 195.0, 240.0, 285.0, 300.0],
+    aspect_ratios=[[2.], [2., 3.], [2., 3.], [2., 3.], [2., 3.], [2., 3.]],
+    base_size=self.img_shape[2],
+    offset=0.5,
+    flip=True)
+```
+
 
 
 # 代码详解
@@ -57,6 +111,7 @@ dataset/images/00002.jpg	dataset/annotations/00002.xml
 `train.py`为训练代码，基本上的训练配置都在`config.py`。
 
 <br/>
+
 `infer.py`为预测代码，这代码可以单独运行，不再需要网络模型代码。预测是可以在图像上画框和类别名称并显示。
 
  - `label_file`是标签文件，由`create_data_list.py`生成，在画框的时候显示类别名称。
@@ -72,4 +127,4 @@ dataset/images/00002.jpg	dataset/annotations/00002.xml
 四种模型的代码存放在`nets`文件夹下，包括`mobilenet_v1_ssd.py`，`mobilenet_v2_ssd.py`，`vgg_ssd.py`，`resnet_ssd.py`模型，模型代码介绍请查看上面的[SSD模型介绍](#SSD模型介绍)。
 
 
-**创作不易，能否给个star吧**
+**创作不易，能否给个star**

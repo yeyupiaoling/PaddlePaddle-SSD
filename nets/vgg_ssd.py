@@ -15,18 +15,19 @@ class VGGSSD:
         conv3 = self.conv_block(conv2, 256, 3)
         conv4 = self.conv_block(conv3, 512, 3)
 
+        # 38x38
         module11 = self.conv_bn(conv4, 3, 512, 1, 1)
         tmp = self.conv_block(module11, 1024, 5)
-
-        # 10x10
+        # 19x19
         module13 = fluid.layers.conv2d(tmp, 1024, 1)
+        # 10x10
         module14 = self.extra_block(module13, 256, 512, 1)
         # 5x5
         module15 = self.extra_block(module14, 128, 256, 1)
         # 3x3
         module16 = self.extra_block(module15, 128, 256, 1)
-        # 2x2
-        module17 = self.extra_block(module16, 64, 128, 1)
+        # 1x1
+        module17 = self.extra_block(module16, 128, 256, 1)
 
         mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
             inputs=[module11, module13, module14, module15, module16, module17],
