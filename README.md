@@ -30,7 +30,7 @@ SSD有以下几个特点：
 3. 模型结构简单，SSD模型把全部的计算都放在一个网络模型上，大体上可以分为两部分，图像特征提取网络和分类检测网络。
 
 以下是SSD的结构图，在原论文中主干网络为VGG16，后面接着6个卷积层，用于提取出6个不同尺度的feature map，这样可以提取出不同大小的bbox，以检测到不同大小的目标对象。其中主干网络可以替换成其他的卷积网络，所以SSD也产生了几种衍生版，例如MobileNetV2 SSD、ResNet50 SSD等等。生成的6个feature map都输入到分类检测网络中，分类检测网络分别对这6个feature map依次预测的，这个分类检测网络可以使用PaddlePaddle的`fluid.layers.multi_box_head()`接口实现。
-![](https://s1.ax1x.com/2020/06/01/tJr8H0.png)
+![](https://s1.ax1x.com/2020/06/02/tNGyJs.png)
 
 针对6个feature map的更详细图如下。
 ![](https://s1.ax1x.com/2020/06/01/tJwMef.jpg)
@@ -61,7 +61,7 @@ module16 = self.extra_block(module15, 128, 256, 1)
 module17 = fluid.layers.pool2d(input=module16, pool_type='avg', global_pooling=True)
 ```
 
-最后这个就是分类检测模型，在PaddlePaddle上只需一个接口即可完成，在参数`inputs`参数中把6个feature map的输出都作为参数输入。
+最后这个就是分类检测模型，在PaddlePaddle上只需一个接口即可完成，在参数`inputs`参数中把6个feature map的输出都作为参数输入。按照论文中设置先验框的长度和`base_size`的最小比率`min_ratio`为20%，先验框的长度和`base_size`的最大比率`max_ratio`为90%，其中`base_size`是输入图片的大小。
 ```python
 mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
     inputs=[module11, module13, module14, module15, module16, module17],
@@ -75,6 +75,23 @@ mbox_locs, mbox_confs, box, box_var = fluid.layers.multi_box_head(
     base_size=self.img_shape[2],
     offset=0.5,
     flip=True)
+```
+`min_sizes`和`max_sizes`分别是每层提取的先验框的最小长度和最大长度，当输入个数len(inputs) > 2，并且`min_size`和`max_size`为None时，通过`baze_size`, `min_ratio`和`max_ratio`来计算出`min_size`和`max_size`，计算公式如下：
+```python
+min_sizes = []
+max_sizes = []
+step = int(math.floor(((max_ratio - min_ratio)) / (num_layer - 2)))
+for ratio in six.moves.range(min_ratio, max_ratio + 1, step):
+    min_sizes.append(base_size * ratio / 100.)
+    max_sizes.append(base_size * (ratio + step) / 100.)
+    min_sizes = [base_size * .10] + min_sizes
+    max_sizes = [base_size * .20] + max_sizes
+```
+
+同样PaddlePaddle也提供了SSD的损失函数，使用的接口时`fluid.layers.ssd_loss()`。通过给定位置偏移预测，置信度预测，候选框和真实框标签，返回的损失是或回归损失和分类损失的加权和。
+```python
+loss = fluid.layers.ssd_loss(locs, confs, gt_box, gt_label, box, box_var)
+loss = fluid.layers.reduce_sum(loss)
 ```
 
 
