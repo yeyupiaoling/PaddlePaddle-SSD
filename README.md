@@ -41,14 +41,13 @@ SSD有以下几个特点：
 conv1 = self.conv_block(self.img, 64, 2)
 conv2 = self.conv_block(conv1, 128, 2)
 conv3 = self.conv_block(conv2, 256, 3)
-conv4 = self.conv_block(conv3, 512, 3)
 ```
 
 6个feature map的实现代码如下，按照论文中的，feature map1的shape为`38*38*512`，feature map2的shape为`19*19*1024`，feature map3的shape为`10*10*512`，feature map4的shape为`5*5*256`，feature map5的shape为`3*3*256`，feature map6的shape为`1*1*256`，
 
 ```python
 # 38x38
-module11 = self.conv_bn(conv4, 3, 512, 1, 1)
+module11 = self.conv_bn(conv3, 3, 512, 1, 1)
 tmp = self.conv_block(module11, 1024, 5)
 # 19x19
 module13 = fluid.layers.conv2d(tmp, 1024, 1)
@@ -59,7 +58,7 @@ module15 = self.extra_block(module14, 128, 256, 1)
 # 3x3
 module16 = self.extra_block(module15, 128, 256, 1)
 # 1x1
-module17 = self.extra_block(module16, 128, 256, 1)
+module17 = fluid.layers.pool2d(input=module16, pool_type='avg', global_pooling=True)
 ```
 
 最后这个就是分类检测模型，在PaddlePaddle上只需一个接口即可完成，在参数`inputs`参数中把6个feature map的输出都作为参数输入。
