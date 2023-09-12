@@ -134,4 +134,3 @@ dataset/images/00002.jpg	dataset/annotations/00002.xml
 四种模型的代码存放在`nets`文件夹下，包括`mobilenet_v1_ssd.py`，`mobilenet_v2_ssd.py`，`vgg_ssd.py`，`resnet_ssd.py`模型，模型代码介绍请查看上面的[SSD模型介绍](#SSD模型介绍)。
 
 
-**创作不易，能否给个star**
