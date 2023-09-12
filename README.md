@@ -12,15 +12,6 @@ SSD，全称Single Shot MultiBox Detector，是Wei Liu在ECCV 2016上提出的�
 ![](https://s1.ax1x.com/2020/05/29/tncEHH.jpg)
 
 
-# 模型下载
-
-| 模型名称 | 所用数据集 | 预训练模型 | 预测模型 |
-| :---: | :---: | :---: | :---: |
-| VGG_SSD网络的VOC预训练模型 | pascalvoc | [点击下载](https://resource.doiduoyi.com/#53i7scw) | [点击下载](https://resource.doiduoyi.com/#w84qc89) |
-| ResNet_SSD网络的VOC预训练模型 | pascalvoc | [点击下载](https://resource.doiduoyi.com/#cuyggu7) | [点击下载](https://resource.doiduoyi.com/#a0o1u4k) |
-| MobileNet_V1_SSD网络的VOC预训练模型 | pascalvoc | [点击下载](https://resource.doiduoyi.com/#aum9kao) | [点击下载](https://resource.doiduoyi.com/#y86w98i) |
-| MobileNet_V2_SSD网络的VOC预训练模型 | pascalvoc | [点击下载](https://resource.doiduoyi.com/#g1uqo28) | [点击下载](https://resource.doiduoyi.com/#6o5kiay) |
-
 
 # SSD模型介绍
 SSD全称Single Shot MultiBox Detector，是2016年提出的一种one-stage目标检测算法，相比two-stage目标检测算法的Faster R-CNN来说，其特点是一步到位，速度相对较快。
